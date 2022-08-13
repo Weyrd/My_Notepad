@@ -25,7 +25,7 @@ def generate_PNJ(difficulty_lvl, job_role=None):
     stats = ["arm", "dext", "intel", "mana", "pv", "str"]
     poids = [1/6*0.8, 1/6*0.9, 1/6, 1/6, 1/6*1.4, 1/6*0.9]
     if job_role == "Heal":
-        poids = [1/6*0.7, 1/6, 1/6*1.3, 1/6, 1/6, 1/6]
+        poids = [1/6*0.8*0.7, 1/6*0.9, 1/6*1.24, 1/6, 1/6*1.4, 1/6*0.9]
     # if job_role == "Tank":
     #     pass
 
