@@ -1,4 +1,3 @@
-from hashlib import new
 import numpy as np 
 import random
 from random import randint
