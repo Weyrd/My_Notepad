@@ -1,2 +1,2 @@
 # share_some_scripts
-Just sharing des scriptes.
+Just sharing des scriptes!
