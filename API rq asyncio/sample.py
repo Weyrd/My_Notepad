@@ -9,9 +9,9 @@ import seaborn as sns
 
 class API():
 
-    def __init__(self):
+    def __init__(self, loop):
         # asyncio
-        self.loop = asyncio.get_event_loop()
+        self.loop = loop
         self.session = None
         self.ENDPOINT = {
             "franchisehistory": "https://stats.nba.com/stats/franchisehistory?LeagueID=00&Season=2022-23",
@@ -32,7 +32,8 @@ class API():
 
 
         async with self.session.get(self.ENDPOINT[endpoint]) as response:
-            data = await response.json()  
+            data = await response.json() 
+        
         return data
 
     
@@ -42,17 +43,17 @@ class API():
         with open('products.json', 'w') as f:
             json.dump(data, f, indent=4)
 
-    #quit loop
-    def quit(self):
-        print("quit")
-        self.loop.stop()
-        self.loop.close()
+    # clsoe session
+    async def close_session(self):
+        await self.session.close()
 
 
 class Main():
 
-    def __init__(self):
-        self.api = API()
+    def __init__(self, api, loop):
+        self.api = api
+        self.loop = loop
+
     
     async def start_api_loop(self):
         try: await self.api.start_session()
@@ -66,11 +67,16 @@ class Main():
             await self.do_things_with_data_1(response)
 
         except Exception as e:print(f"Error : {'```{}: {}```'.format(type(e).__name__, e)}")
-        finally:self.api.quit()
 
     async def run(self):
         await self.start_api_loop()
         await self.get_nba_1()
+    
+    def quit(self):
+        self.loop.run_until_complete(self.api.close_session())
+        self.loop.stop()
+        self.loop.close()
+
 
 
     async def do_things_with_data_1(self, data):
@@ -81,4 +87,17 @@ class Main():
         
 
 # Run
-asyncio.run(Main.run(Main()))
+if __name__ == "__main__":
+    # new loop
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    api = API(loop)
+    main = Main(api, loop)
+    try:
+        main.loop.run_until_complete(main.run())
+    
+    except Exception as e:
+        print(f"Error loop : {'```{}: {}```'.format(type(e).__name__, e)}")
+    finally:
+        main.quit()
+
